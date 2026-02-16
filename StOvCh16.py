@@ -1,4 +1,4 @@
-__version__ = "260216_2115"
+__version__ = "260217_0000"
 
 #234+6789!#234+6789!#234+6789!#234+6789!#234+6789!#234+6789!#234+6789!72
 ########################################################################
@@ -228,17 +228,39 @@ def get_solution(a):
 	sv=	sum_all_coins(d, s)		#value of selected
 	eq= ''	#equation  10+10-10+5
 	
-	for i in range(len(s)-1, -1, -1):
-		eq += '+' + str(i)
+	i = len(s)-1 # i points to highest denom. 
+#		T2#		T2
+	while sv != t :
+#		T2
+		while sv < t:
+			if  s[i]< c[i]:
+				s[i]+=1
+				eq += '+' + str(d[i])
+#				T4 sv=	sum_all_coins(d, s)		#value of selected
+			else:
+				if i>0:
+					i -= 1
+		  sv=	sum_all_coins(d, s)		#value of selected
+
+
+#				T4 
+		while sv > t:
+			pass #T3
+			break #T3
+			break  #T3
+          
+#				T4
+		sv=	sum_all_coins(d, s)		#value of selected
+		eq += '+' + str(d[i])
 		print(f"------>{i}, {eq}")
 	
 	
-		while sv < t :
-			pass
-			break
-	#	end while
+#		end while 3
+#			pass #T3
+#			break #T3
+	#	end while 1
 	
-#	end for	
+#
 	
 	
 	
