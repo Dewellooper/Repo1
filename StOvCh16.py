@@ -32,10 +32,9 @@ if set_cmdline_args_internal:
 
 #	set_cmdlineArgs=['-h']				# help screen and quit
 #	set_cmdlineArgs=['-d']				# debug with pdb
-	set_cmdlineArgs=['-m']				# MarkDown table line
-#	set_cmdlineArgs=['-t']				# Test
+#	set_cmdlineArgs=['-m']				# MarkDown table line
+	set_cmdlineArgs=['-t']				# Test
 #	set_cmdlineArgs=[]		
-	
 
 #######################################################################
 
