@@ -246,6 +246,7 @@ def get_solution(a):
 #				T4 
 		while sv > t:
 			pass #T3
+      pass
 			break #T3
 			break  #T3
           
