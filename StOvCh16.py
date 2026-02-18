@@ -243,7 +243,7 @@ def get_solution(a):
 			sv=	sum_all_coins(d, s)		#value of selected
 
 
-#				T4 
+#				T4
 		while sv > t:
 			pass #T3
       pass
