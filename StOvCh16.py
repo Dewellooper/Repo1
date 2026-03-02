@@ -1,4 +1,4 @@
-__version__ = "260227_2200"
+__version__ = "260302_2250"
 
 #234+6789!#234+6789!#234+6789!#234+6789!#234+6789!#234+6789!#234+6789!72
 ########################################################################
@@ -32,8 +32,8 @@ if set_cmdline_args_internal:
 
 #	set_cmdlineArgs=['-h']				# help screen and quit
 #	set_cmdlineArgs=['-d']				# debug with pdb
-#	set_cmdlineArgs=['-m']				# MarkDown table line
-	set_cmdlineArgs=['-t']				# Test
+	set_cmdlineArgs=['-m']				# MarkDown table line
+#	set_cmdlineArgs=['-t']				# Test
 #	set_cmdlineArgs=[]		
 
 #######################################################################
@@ -146,7 +146,7 @@ DATA = [\
   [[1,3,6,9],[3,2,1,1],16],
   [[2,3,5,9],[2,2,1,1],15],
   [[1,2,3,4],[4,2,1,1],11],
-  [[,[2,2,1,1],13],
+  [[1,3,5,7],[2,2,1,1],13],
   [[2,4,6,9],[2,2,1,1],14],
   [[1,2,5,6],[3,2,1,1],12] ]
 
@@ -220,50 +220,59 @@ def get_solution(a):
 	c = counts		 = a[1]
 	t = target		 = a[2]
 	s = selected	 = [0 for i in range(len(c))]
-	
-	
-	
+	saved_pos 		 = [ list(s) ]   # restart after backstepping
 	sv=	sum_all_coins(d, s)		#value of selected
 	eq= ''	#equation  10+10-10+5
+	unpossible = False
 	
 	i = len(s)-1 # i points to highest denom. 
-#		T2#		T2
-	while sv != t :
-#		T2
-		while sv < t:
-			if  s[i]< c[i]:
-				s[i]+=1
+	dec_pos = i			# value, which decremented
+	emergency_countdown=100
+	
+	while sv != t :				#While1  invalid, target not reached
+		emergency_countdown -= 1
+		if emergency_countdown < 0 : break
+
+		while sv < t:			#While2 less
+			if	s[i]< c[i]:
+				s[i]+=1			#use available coins
 				eq += '+' + str(d[i])
-#				T4 sv=	sum_all_coins(d, s)		#value of selected
 			else:
-				if i>0:
+				if i>0:			#smaller values
 					i -= 1
+				else:			# no smaller values left over
+					#backstepping!
+					unpossible = True				
 			sv=	sum_all_coins(d, s)		#value of selected
+			if sv < t:
+				saved_pos.append( (list(s), i) )
+			
+			emergency_countdown -= 1
+			if emergency_countdown < 0 : break
 
+#		dec_pos = min(i+1, len(s)-1) #?????
 
-#				T4
-		while sv > t:
-			pass #T3
-      pass
-			break #T3
-			break  #T3
-          
-#				T4
-		sv=	sum_all_coins(d, s)		#value of selected
-		eq += '+' + str(d[i])
-		print(f"------>{i}, {eq}")
-	
-	
+		while sv > t:			#While3 too much
+			(s,i) = saved_pos.pop()
+			eq += '-' + str(d[i])
+			if i>0:			#smaller values
+				i -= 1
+			else:			# no smaller values left over
+				#backstepping!
+				unpossible = True				
+
+					
+			emergency_countdown -= 1
+			if emergency_countdown < 0 : break
+					
+
+			sv=	sum_all_coins(d, s)		#value of selected
 #		end while 3
-#			pass #T3
-#			break #T3
-	#	end while 1
-	
-#
-	
-	
-	
-		
+		print(f"------>{i}, {eq}")
+#	end while 1
+
+	if emergency_countdown < 0 :breakpoint()
+
 #	how_many_coins = sum(s)
 	return (sum(s), sv)
 ## END of get_solution()
