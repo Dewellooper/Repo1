@@ -1,4 +1,4 @@
-__version__ = "260303_2250"
+__version__ = "260308_2100"
 
 #234+6789!#234+6789!#234+6789!#234+6789!#234+6789!#234+6789!#234+6789!72
 ########################################################################
@@ -220,16 +220,17 @@ def get_solution(a):
 	c = counts		 = a[1]
 	t = target		 = a[2]
 	s = selected	 = [0 for i in range(len(c))]
-	saved_pos 		 = [ list(s) ]   # restart after backstepping
 	sv=	sum_all_coins(d, s)		#value of selected
 	eq= ''	#equation  10+10-10+5
 	unpossible = False
 	
 	i = len(s)-1 # i points to highest denom. 
+	saved_pos 		 = [ list(s), i]   # restart after backstepping
+
 	dec_pos = i			# value, which decremented
 	emergency_countdown=100
 	
-	while sv != t :				#While1  invalid, target not reached
+	while sv != t and not unpossible:				#While1  invalid, target not reached
 		emergency_countdown -= 1
 		if emergency_countdown < 0 : break
 
@@ -242,25 +243,44 @@ def get_solution(a):
 					i -= 1
 				else:			# no smaller values left over
 					#backstepping!
-					unpossible = True				
+					i2 = 0
+					while i2 <= i and len(saved_pos)>1:
+						i2= saved_pos.pop()
+						s = saved_pos.pop()
+						
+						
+						emergency_countdown -= 1
+						if emergency_countdown < 0 : break
+
+					if i2 <= i:
+						unpossible = True
+						break		#While2 less
+					else:
+						i= i2
+							
 			sv=	sum_all_coins(d, s)		#value of selected
 			if sv < t:
-				saved_pos.append( (list(s), i) )
+				saved_pos.append( list(s) )
+				saved_pos.append( i )
 			
 			emergency_countdown -= 1
 			if emergency_countdown < 0 : break
 
 #		dec_pos = min(i+1, len(s)-1) #?????
 
-		while sv > t:			#While3 too much
-			(s,i) = saved_pos.pop()
+		while sv > t and len(saved_pos)>1:			#While3 too much
+			i2= saved_pos.pop()
+			s = saved_pos.pop()
 			eq += '-' + str(d[i])
 			if i>0:			#smaller values
 				i -= 1
 			else:			# no smaller values left over
 				#backstepping!
-				unpossible = True				
-
+				if i2 <= i:
+					unpossible = True
+					break		#While2 less
+				else:
+					i= i2
 					
 			emergency_countdown -= 1
 			if emergency_countdown < 0 : break
@@ -268,13 +288,13 @@ def get_solution(a):
 
 			sv=	sum_all_coins(d, s)		#value of selected
 #		end while 3
-		print(f"------>{i}, {eq}")
+#		print(f"------>{i}, {eq}")
 #	end while 1
 
 	if emergency_countdown < 0 :breakpoint()
 
 #	how_many_coins = sum(s)
-	return (sum(s), sv)
+	return (sum(s), eq, unpossible)
 ## END of get_solution()
 
 def main():
@@ -298,7 +318,11 @@ def main():
 		sum1   = sum_all_coins(a[0], a[1])
 		if sum1 >= a[2]:
 		
-			result[n], msg = get_solution(a)	#"enough"
+			result[n], msg, unpos = get_solution(a)	#"enough"
+			if unpos:
+				result[n] = -1
+				msg = "solution impossible"
+			
 		else:
 			msg = "not enough coins!!!"
 			result[n] = -1
